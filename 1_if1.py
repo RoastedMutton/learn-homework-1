@@ -14,12 +14,27 @@
 
 """
 
+def occupation (age):
+  if age > 0 and age < 6:
+    return "Идите в сад!"
+  elif age <= 17:
+    return "Идите в школу!"
+  elif age <= 23:
+    return "Бегом на пары!"
+  else:
+    return "Учите Python для работы"
+  
+
 def main():
     """
     Эта функция вызывается автоматически при запуске скрипта в консоли
     В ней надо заменить pass на ваш код
     """
-    pass
+    age_inp = int(input("Введите возраст: "))
+    mes = occupation(age_inp)
+    print(mes)
+
 
 if __name__ == "__main__":
     main()
+
