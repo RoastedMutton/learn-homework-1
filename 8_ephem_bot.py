@@ -1,49 +1,53 @@
-"""
-Домашнее задание №1
 
-Использование библиотек: ephem
-
-* Установите модуль ephem
-* Добавьте в бота команду /planet, которая будет принимать на вход
-  название планеты на английском, например /planet Mars
-* В функции-обработчике команды из update.message.text получите
-  название планеты (подсказка: используйте .split())
-* При помощи условного оператора if и ephem.constellation научите
-  бота отвечать, в каком созвездии сегодня находится планета.
-
-"""
 import logging
+
+import ephem
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
+import settings
+
 logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO,
-                    filename='bot.log')
-
-
-PROXY = {
-    'proxy_url': 'socks5://t1.learn.python.ru:1080',
-    'urllib3_proxy_kwargs': {
-        'username': 'learn',
-        'password': 'python'
-    }
-}
+                    filename='lot.log')
 
 
 def greet_user(update, context):
-    text = 'Вызван /start'
-    print(text)
+    text = 'Наберите команду /planet и название планеты из списка для \
+    определения созвездия: Sun, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune'
     update.message.reply_text(text)
 
 
 def talk_to_me(update, context):
-    user_text = update.message.text
-    print(user_text)
-    update.message.reply_text(text)
+    if update.message.text.split()[0] == "/planet":
+        planet = update.message.text.split()[1]
+        date = update['message']['date']
+        try: 
+            if planet == "Mars":
+                planet = ephem.Mars(date)
+            elif planet == "Sun":
+                planet = ephem.Sun(date)
+            elif planet == "Mercury":
+                planet = ephem.Mercury(date)
+            elif planet == "Venus":
+                planet = ephem.Venus(date)
+            elif planet == "Jupiter":
+                planet = ephem.Jupiter(date)
+            elif planet == "Saturn":
+                planet = ephem.Saturn(date)
+            elif planet == "Uranus":
+                planet = ephem.Uranus(date)
+            elif planet == "Neptune":
+                planet = ephem.Neptune(date)
+            constellation = ephem.constellation(planet)
+            text = f'Созвездие {constellation[1]}'
+        except:
+            text = 'Нет такой планеты в Солнечной системе'     
+        update.message.reply_text(text)
 
 
 def main():
-    mybot = Updater("КЛЮЧ, КОТОРЫЙ НАМ ВЫДАЛ BotFather", request_kwargs=PROXY, use_context=True)
+    mybot = Updater(settings.API_KEY, use_context=True)
 
     dp = mybot.dispatcher
     dp.add_handler(CommandHandler("start", greet_user))
